@@ -21,13 +21,13 @@ Rectangle {
         id: clockface
         sourceSize.width: parent.width
         fillMode: Image.PreserveAspectFit
-        source: "qrc:/clock/images/clockface.png"
+        source: "qrc:/desktop_clock/images/clockface.png"
 
         Image {
             x: clockface.width/2 - width/2
             y: (clockface.height/2) - height/2
             scale: clockface.width/465
-            source: "qrc:/clock/images/hour.png"
+            source: "qrc:/desktop_clock/images/hour.png"
             transform: Rotation {
                     origin.x: 12.5; origin.y: 166;
                     angle: (hms.hours * 30) + (hms.minutes * 0.5)
@@ -37,7 +37,7 @@ Rectangle {
         Image {
             x: clockface.width/2 - width/2
             y: clockface.height/2 - height/2
-            source: "qrc:/clock/images/minute.png"
+            source: "qrc:/desktop_clock/images/minute.png"
             scale: clockface.width/465
             transform: Rotation {
                     origin.x: 5.5; origin.y: 201;
@@ -51,7 +51,7 @@ Rectangle {
         Image {
             x: clockface.width/2 - width/2
             y: clockface.height/2 - height/2
-            source: "qrc:/clock/images/second.png"
+            source: "qrc:/desktop_clock/images/second.png"
             scale: clockface.width/465
             transform: Rotation {
                     origin.x: 2; origin.y: 202;
@@ -65,7 +65,7 @@ Rectangle {
         Image {
             x: clockface.width/2 - width/2
             y: clockface.height/2 - height/2
-            source: "qrc:/clock/images/cap.png"
+            source: "qrc:/desktop_clock/images/cap.png"
             scale: clockface.width/465
         }
     }

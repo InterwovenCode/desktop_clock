@@ -8,6 +8,7 @@ from PyQt5.QtQuick import *
 from PyQt5.QtQuickWidgets import *
 from PyQt5.QtQml import *
 from time import localtime
+sys.path.insert(0, os.path.dirname(__file__))
 from resource import *
 
 class Backend(QObject):
@@ -26,11 +27,10 @@ class Backend(QObject):
         self.hms.emit(local_time.tm_hour, local_time.tm_min, local_time.tm_sec)
 
 class DrawingScene(QGraphicsScene):
-    def __init__(self, runtimePath:str, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
 
-        qmlPath = os.path.join(runtimePath, "main.qml").replace("/", "\\")
-        qmlUrl = f"file:///{qmlPath}"
+        qmlUrl = "qrc:/desktop_clock/qml/main.qml"
         canvas_quick_item = CanvasQuickQmlItem(QRectF(0, 0, 200, 200), qmlUrl)
         canvas_quick_item.setFlags(
             QGraphicsItem.ItemIsSelectable
@@ -77,7 +77,7 @@ class DrawingView(QGraphicsView):
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
 class DesktopClockWindow3(QWidget):
-    def __init__(self, runtimePath:str, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
@@ -85,7 +85,6 @@ class DesktopClockWindow3(QWidget):
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Tool)
 
-        self.runtimePath = runtimePath
         self.initUI()
         self.show()
 
@@ -103,7 +102,7 @@ class DesktopClockWindow3(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        self.scene = DrawingScene(self.runtimePath)
+        self.scene = DrawingScene()
         view = DrawingView(self.scene)
 
         self.layout.addWidget(view)
@@ -115,21 +114,15 @@ class DesktopClockWindow3(QWidget):
         return super().paintEvent(a0)
 
 class DesktopClockWindow1(QQuickWidget):
-    def __init__(self, runtimePath:str, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
-
-        qmlPath = runtimePath.replace("/", "\\")
-        qmlUrl = (f"file:///{qmlPath}")
-        self.engine().addImportPath(qmlUrl)
 
         self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Tool)
         self.setClearColor(QColor(Qt.GlobalColor.transparent))
 
-        qmlPath = os.path.join(runtimePath, "main.qml").replace("/", "\\")
-        qmlUrl = (f"file:///{qmlPath}")
-        self.setSource(QUrl(qmlUrl))
+        self.setSource(QUrl("qrc:/desktop_clock/qml/main.qml"))
 
         self.backend = Backend()
         self.rootObject().setProperty("backend", self.backend)
@@ -143,7 +136,7 @@ class DesktopClockWindow1(QQuickWidget):
                   )
 
 class DesktopClockWindow2(QQuickView):
-    def __init__(self, runtimePath:str, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setFlag(Qt.WindowType.FramelessWindowHint, True)
@@ -151,9 +144,7 @@ class DesktopClockWindow2(QQuickView):
         self.setFlag(Qt.WindowType.WindowTransparentForInput, True)
         self.setColor(QColor(Qt.GlobalColor.transparent))
 
-        qmlPath = os.path.join(runtimePath, "main.qml").replace("/", "\\")
-        qmlUrl = (f"file:///{qmlPath}")
-        self.setSource(QUrl(qmlUrl))
+        self.setSource(QUrl("qrc:/desktop_clock/qml/main.qml"))
 
         self.backend = Backend()
         self.rootObject().setProperty("backend", self.backend)
@@ -219,9 +210,9 @@ class DesktopClock(PluginInterface):
     def onChangeEnabled(self):
         if self.enable:
             QQuickWindow.setSceneGraphBackend(QSGRendererInterface.GraphicsApi.Software)
-            self.effectWnd = DesktopClockWindow1(self.runtimePath)
-            # self.effectWnd = DesktopClockWindow2(self.runtimePath)
-            # self.effectWnd = DesktopClockWindow3(self.runtimePath)
+            self.effectWnd = DesktopClockWindow1()
+            # self.effectWnd = DesktopClockWindow2()
+            # self.effectWnd = DesktopClockWindow3()
             self.effectWnd.show()
         else:
             self.effectWnd.close()
