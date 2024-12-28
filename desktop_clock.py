@@ -19,30 +19,30 @@ class Backend(QObject):
 
         self.timer = QTimer()
         self.timer.setInterval(100)  # msecs 100 = 1/10th sec
-        self.timer.timeout.connect(self.update_time)
+        self.timer.timeout.connect(self.updateTime)
         self.timer.start()
 
-    def update_time(self):
-        local_time = localtime()
-        self.hms.emit(local_time.tm_hour, local_time.tm_min, local_time.tm_sec)
+    def updateTime(self):
+        localTime = localtime()
+        self.hms.emit(localTime.tm_hour, localTime.tm_min, localTime.tm_sec)
 
 class DrawingScene(QGraphicsScene):
     def __init__(self, parent=None):
         super().__init__(parent)
 
         qmlUrl = "qrc:/desktop_clock/qml/main.qml"
-        canvas_quick_item = CanvasQuickQmlItem(QRectF(0, 0, 200, 200), qmlUrl)
-        canvas_quick_item.setFlags(
+        canvasQuickItem = CanvasQuickQmlItem(QRectF(0, 0, 200, 200), qmlUrl)
+        canvasQuickItem.setFlags(
             QGraphicsItem.ItemIsSelectable
             | QGraphicsItem.ItemIsMovable
             | QGraphicsItem.ItemIsFocusable
         )
-        canvas_quick_item.setAcceptHoverEvents(True)
+        canvasQuickItem.setAcceptHoverEvents(True)
 
         self.backend = Backend()
-        canvas_quick_item.quickWidget.rootObject().setProperty("backend", self.backend)
-        self.backend.update_time()
-        self.addItem(canvas_quick_item)
+        canvasQuickItem.quickWidget.rootObject().setProperty("backend", self.backend)
+        self.backend.updateTime()
+        self.addItem(canvasQuickItem)
 
 class DrawingView(QGraphicsView):
     def __init__(self, scene: QGraphicsScene, parent=None):
@@ -126,7 +126,7 @@ class DesktopClockWindow1(QQuickWidget):
 
         self.backend = Backend()
         self.rootObject().setProperty("backend", self.backend)
-        self.backend.update_time()
+        self.backend.updateTime()
 
         screen = QApplication.primaryScreen()
         availableGeometry = screen.availableGeometry()
@@ -148,7 +148,7 @@ class DesktopClockWindow2(QQuickView):
 
         self.backend = Backend()
         self.rootObject().setProperty("backend", self.backend)
-        self.backend.update_time()
+        self.backend.updateTime()
 
         screen = QApplication.primaryScreen()
         availableGeometry = screen.availableGeometry()
